@@ -5,7 +5,9 @@
   "license": "MIT",
   "dependencies": {
     "apollo-server": "^2.12.0",
-    "graphql": "^15.0.0"
+    "dotenv-safe": "^8.2.0",
+    "graphql": "^15.0.0",
+    "node-fetch": "^2.6.0"
   },
   "scripts": {
     "start": "nodemon --exec npx babel-node --root-mode upward --ignore=\" \" src/index.js",
