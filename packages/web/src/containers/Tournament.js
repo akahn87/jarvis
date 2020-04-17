@@ -1,7 +1,6 @@
 import React from 'react'
 import {useQuery} from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import Paper from '@material-ui/core/Paper'
 
 import TournamentDetails from '../components/TournamentDetails'
 
@@ -14,6 +13,15 @@ const TOURNAMENT = gql`
       teams
       signup_cap
       live_image_url
+      signups {
+        team_name
+        captain {
+          username
+        }
+        players {
+          username
+        }
+      }
     }
   }
 `
