@@ -9,13 +9,11 @@ import TableRow from '@material-ui/core/TableRow'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
 
-import BoxArt from '../images/box/quake_champions.jpg'
-
 const styles = {
   boxArt: {
-    height: '50px',
+    height: '96px',
     marginRight: '10px',
-    width: '50px',
+    width: '77px',
   },
 }
 
@@ -36,11 +34,14 @@ function TournamentList({tournaments}) {
                 <TableCell>
                   <Grid container direction="row" alignItems="center">
                     <Grid item>
-                      <img
-                        style={styles.boxArt}
-                        src={BoxArt}
-                        alt={tournament.game_name}
-                      />
+                      {tournament.game_info &&
+                        tournament.game_info.box_art_url && (
+                          <img
+                            style={styles.boxArt}
+                            src={tournament.game_info.box_art_url}
+                            alt={tournament.game_name}
+                          />
+                        )}
                     </Grid>
                     <Grid item>
                       <h2>{tournament.name}</h2>

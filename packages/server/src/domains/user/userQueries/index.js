@@ -1,7 +1,9 @@
 import currentUser from './rootCurrentUser'
 
-export default {
+const resolvers = {
   Query: {
     currentUser,
   },
 }
+
+export default resolvers

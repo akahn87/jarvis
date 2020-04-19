@@ -9,7 +9,7 @@ export default async (
   const doc = new GoogleSpreadsheet(sheetId)
 
   // OR load directly from json file if not in secure environment
-  await doc.useServiceAccountAuth(require('../../../oauth2.keys.json'))
+  await doc.useServiceAccountAuth(require('../../../../oauth2.keys.json'))
   await doc.loadInfo() // loads document properties and worksheets
 
   const sheet = doc.sheetsByIndex[0]

@@ -64,6 +64,7 @@ const Tournament = /* GraphQL */ `
     participants_swappable: Boolean
     team_convertable: Boolean
     group_stages_were_started: Boolean
+    game_info: GameInfo
   }
 
   type Signups {

@@ -50,6 +50,8 @@ function Tournament({match}) {
     variables: {id: match.params.id},
   })
 
+  console.log(data)
+
   if (loading) return <LoadingIndicator />
   if (error) return <p>Error :(</p>
 

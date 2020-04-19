@@ -17,6 +17,9 @@ const TOURNAMENTS = gql`
       signup_cap
       start_at
       open_signup
+      game_info {
+        box_art_url
+      }
     }
   }
 `

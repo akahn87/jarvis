@@ -1,4 +1,5 @@
 import express from 'express'
+import {join} from 'path'
 import {ApolloServer} from 'apollo-server-express'
 import session from 'express-session'
 import connectRedis from 'connect-redis'
@@ -7,7 +8,7 @@ import RateLimitRedisStore from 'rate-limit-redis'
 
 import {redisSessionPrefix} from './constants'
 import redis from './redis'
-import schema from './schema'
+import {rebuildLoaders, gatherDomains} from './utils/fetchDomains'
 
 require('dotenv-safe').config()
 
@@ -15,14 +16,22 @@ const SESSION_SECRET = 'ajslkjalksjdfkl'
 const RedisStore = connectRedis(session)
 
 const startServer = async () => {
+  const domainDirs = [join(__dirname, 'domains')]
+  const {schema, rawLoaders} = await gatherDomains(domainDirs)
+
   const app = express()
   const server = new ApolloServer({
     schema,
-    context: ({req}) => ({
-      url: req.protocol + '://' + req.get('host'),
-      session: req.session,
-      req,
-    }),
+    context: ({req}) => {
+      const loaders = rebuildLoaders(rawLoaders, req)
+
+      return {
+        loaders,
+        url: req.protocol + '://' + req.get('host'),
+        session: req.session,
+        req,
+      }
+    },
   })
 
   app.use(
