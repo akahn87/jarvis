@@ -2,6 +2,9 @@ import React from 'react'
 import {useQuery} from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
+import {Container} from '@material-ui/core'
+
+import LoadingIndicator from '../components/LoadingIndicator'
 import TournamentList from '../components/TournamentList'
 
 const TOURNAMENTS = gql`
@@ -13,6 +16,7 @@ const TOURNAMENTS = gql`
       teams
       signup_cap
       start_at
+      open_signup
     }
   }
 `
@@ -20,14 +24,14 @@ const TOURNAMENTS = gql`
 function Tournaments() {
   const {loading, error, data} = useQuery(TOURNAMENTS)
 
-  if (loading) return <p>Loading...</p>
+  if (loading) return <LoadingIndicator />
   if (error) return <p>Error :(</p>
 
   return (
-    <div>
+    <Container maxWidth="lg">
       <h1>Tournaments</h1>
       <TournamentList tournaments={data.tournaments} />
-    </div>
+    </Container>
   )
 }
 

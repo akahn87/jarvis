@@ -9,7 +9,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import App from './containers/App'
 import theme from './theme'
 
-const client = new ApolloClient({uri: 'http://localhost:4000'})
+const client = new ApolloClient({uri: 'http://localhost:4000/graphql'})
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>

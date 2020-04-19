@@ -7,6 +7,17 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
 import Box from '@material-ui/core/Box'
+import Grid from '@material-ui/core/Grid'
+
+import BoxArt from '../images/box/quake_champions.jpg'
+
+const styles = {
+  boxArt: {
+    height: '50px',
+    marginRight: '10px',
+    width: '50px',
+  },
+}
 
 function TournamentList({tournaments}) {
   return (
@@ -23,10 +34,19 @@ function TournamentList({tournaments}) {
                 style={{textDecoration: 'none'}}
               >
                 <TableCell>
-                  {tournament.game_name}
-                  <h2>{tournament.name}</h2>
+                  <Grid container direction="row" alignItems="center">
+                    <Grid item>
+                      <img
+                        style={styles.boxArt}
+                        src={BoxArt}
+                        alt={tournament.game_name}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <h2>{tournament.name}</h2>
+                    </Grid>
+                  </Grid>
                 </TableCell>
-                <TableCell></TableCell>
                 <TableCell>
                   {tournament.teams ? tournament.teams : 0}
                   {tournament.signup_cap
@@ -35,9 +55,13 @@ function TournamentList({tournaments}) {
                   Teams
                 </TableCell>
                 <TableCell>
-                  <Link to={'/asdf'}>
-                    <Box color="success.main">Registrations Open</Box>
-                  </Link>
+                  {tournament.open_signup ? (
+                    <Link to={'/asdf'}>
+                      <Box color="success.main">Registration Open</Box>
+                    </Link>
+                  ) : (
+                    <Box color="error.main">Registration Closed</Box>
+                  )}
                 </TableCell>
               </TableRow>
             )
