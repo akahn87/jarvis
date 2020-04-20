@@ -1,11 +1,13 @@
 import gql from 'graphql-tag'
 
-const GET_CURRENT_USER = gql`
-  {
+const CURRENT_USER_QUERY = gql`
+  query CurrentUserQuery {
     currentUser {
-      email
+      id
+      username
+      role
     }
   }
 `
 
-export {GET_CURRENT_USER}
+export {CURRENT_USER_QUERY}

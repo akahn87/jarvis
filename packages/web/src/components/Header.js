@@ -9,7 +9,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Button from '@material-ui/core/Button'
 import SvgIcon from '@material-ui/core/SvgIcon'
 
-import {GET_CURRENT_USER} from '../queries'
+import {CURRENT_USER_QUERY} from '../queries'
 import {Typography} from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
@@ -30,23 +30,32 @@ function HomeIcon(props) {
 }
 
 const HeaderLoginButton = ({currentUser}) => {
-  const {data} = useQuery(GET_CURRENT_USER)
+  const {loading, error, data} = useQuery(CURRENT_USER_QUERY)
+  if (loading) return <div>Loading</div>
+  if (error) return <div>Error: {JSON.stringify(error)}</div>
 
-  if (data && data.currentUser) {
+  const isLoggedIn = !!data.currentUser
+
+  if (isLoggedIn) {
+    const {username} = data.currentUser
+
     return (
-      <Button
-        onClick={() => console.log('should probably logout..')}
-        color="inherit"
-      >
-        Logout
-      </Button>
+      <>
+        <Typography>Hi, {username}</Typography>
+        <Button
+          onClick={() => console.log('should probably logout..')}
+          color="white"
+        >
+          Logout
+        </Button>
+      </>
     )
   }
 
   return (
-    <Link to="/login">
-      <Button color="inherit">Login</Button>
-    </Link>
+    <a href="http://localhost:4000/auth/discord">
+      <Button color="white">Login</Button>
+    </a>
   )
 }
 

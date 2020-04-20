@@ -82,10 +82,10 @@ const startServer = async () => {
   )
 
   const corsOptions = {
+    origin: 'http://localhost:3000',
     credentials: true,
-    origin: '*',
   }
-  app.use('*', cors(corsOptions))
+  app.use(cors(corsOptions))
 
   app.use(passport.initialize())
   app.use(passport.session())
@@ -97,11 +97,9 @@ const startServer = async () => {
   app.get(
     '/auth/discord/callback',
     passport.authenticate('discord', {
-      failureRedirect: '/',
+      successRedirect: 'http://localhost:3000',
+      failureRedirect: 'http://localhost:3000',
     }),
-    (req, res) => {
-      res.redirect('http://localhost:3000/') // Successful auth
-    },
   )
 
   const server = new ApolloServer({
@@ -125,7 +123,7 @@ const startServer = async () => {
     },
   })
 
-  server.applyMiddleware({app})
+  server.applyMiddleware({app, cors: false})
 
   await app.listen({
     port: 4000,
