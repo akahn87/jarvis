@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button'
 import SvgIcon from '@material-ui/core/SvgIcon'
 
 import {GET_CURRENT_USER} from '../queries'
+import {Typography} from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
   menuButton: {

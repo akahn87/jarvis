@@ -10,7 +10,5 @@ export default async (_, {query}) => {
     },
   ).then(res => res.json())
 
-  console.log(response)
-
   return response.data
 }

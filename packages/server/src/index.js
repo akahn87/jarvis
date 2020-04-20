@@ -5,6 +5,9 @@ import session from 'express-session'
 import connectRedis from 'connect-redis'
 import RateLimit from 'express-rate-limit'
 import RateLimitRedisStore from 'rate-limit-redis'
+import passport from 'passport'
+import discord from 'passport-discord'
+import cors from 'cors'
 
 import {redisSessionPrefix} from './constants'
 import redis from './redis'
@@ -12,27 +15,42 @@ import {rebuildLoaders, gatherDomains} from './utils/fetchDomains'
 
 require('dotenv-safe').config()
 
-const SESSION_SECRET = 'ajslkjalksjdfkl'
+const SESSION_SECRET = process.env.SESSION_SECRET
 const RedisStore = connectRedis(session)
+const DiscordStrategy = discord.Strategy
+
+passport.use(
+  new DiscordStrategy(
+    {
+      clientID: process.env.DISCORD_CLIENT_ID,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET,
+      callbackURL: '/auth/discord/callback',
+    },
+    (accessToken, refreshToken, profile, done) => {
+      process.nextTick(() => {
+        return done(null, profile)
+      })
+
+      // User.findOrCreate({discordId: profile.id}, function (err, user) {
+      //   return cb(err, user)
+      // })
+    },
+  ),
+)
+
+passport.serializeUser((user, done) => {
+  done(null, user)
+})
+
+passport.deserializeUser((obj, done) => {
+  done(null, obj)
+})
 
 const startServer = async () => {
   const domainDirs = [join(__dirname, 'domains')]
   const {schema, rawLoaders} = await gatherDomains(domainDirs)
 
   const app = express()
-  const server = new ApolloServer({
-    schema,
-    context: ({req}) => {
-      const loaders = rebuildLoaders(rawLoaders, req)
-
-      return {
-        loaders,
-        url: req.protocol + '://' + req.get('host'),
-        session: req.session,
-        req,
-      }
-    },
-  })
 
   app.use(
     new RateLimit({
@@ -63,14 +81,51 @@ const startServer = async () => {
     }),
   )
 
-  const cors = {
+  const corsOptions = {
     credentials: true,
     origin: '*',
   }
+  app.use('*', cors(corsOptions))
 
-  server.applyMiddleware({app, cors})
+  app.use(passport.initialize())
+  app.use(passport.session())
 
-  // server.express.get('/confirm/:id', confirmEmail)
+  app.get(
+    '/auth/discord',
+    passport.authenticate('discord', {scope: ['identify']}),
+  )
+  app.get(
+    '/auth/discord/callback',
+    passport.authenticate('discord', {
+      failureRedirect: '/',
+    }),
+    (req, res) => {
+      res.redirect('http://localhost:3000/') // Successful auth
+    },
+  )
+
+  const server = new ApolloServer({
+    schema,
+    context: ({req}) => {
+      const loaders = rebuildLoaders(rawLoaders, req)
+      const currentUser = req.user || null
+
+      return {
+        loaders,
+        url: req.protocol + '://' + req.get('host'),
+        session: req.session,
+        req,
+        user: currentUser,
+      }
+    },
+    playground: {
+      settings: {
+        'request.credentials': 'same-origin',
+      },
+    },
+  })
+
+  server.applyMiddleware({app})
 
   await app.listen({
     port: 4000,
