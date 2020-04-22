@@ -28,7 +28,7 @@ function TournamentList({tournaments}) {
                 component={Link}
                 hover={true}
                 key={tournament.id}
-                to={`/tournament/${tournament.id}`}
+                to={`/tournaments/${tournament.id}`}
                 style={{textDecoration: 'none'}}
               >
                 <TableCell>

@@ -6,35 +6,55 @@ import connectRedis from 'connect-redis'
 import RateLimit from 'express-rate-limit'
 import RateLimitRedisStore from 'rate-limit-redis'
 import passport from 'passport'
-import discord from 'passport-discord'
 import cors from 'cors'
+import {Strategy as DiscordStrategy} from 'passport-discord'
 
+import db, {sequelize} from './database'
 import {redisSessionPrefix} from './constants'
 import redis from './redis'
 import {rebuildLoaders, gatherDomains} from './utils/fetchDomains'
 
 require('dotenv-safe').config()
 
-const SESSION_SECRET = process.env.SESSION_SECRET
+const {SESSION_SECRET, DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET} = process.env
 const RedisStore = connectRedis(session)
-const DiscordStrategy = discord.Strategy
+
+const DiscordStrategyCallback = async (
+  accessToken,
+  refreshToken,
+  profile,
+  done,
+) => {
+  // let user = await User.findOne({username: profile.username})
+  // console.log(user)
+  let user = profile
+
+  // no user was found, lets create a new one
+  if (!user) {
+    user = await db.User.create({
+      name: null,
+      email: null,
+      username: profile.username,
+      discordId: profile.id,
+      token: accessToken,
+    })
+  }
+
+  done(null, {
+    user,
+    accessToken,
+    refreshToken,
+  })
+}
 
 passport.use(
   new DiscordStrategy(
     {
-      clientID: process.env.DISCORD_CLIENT_ID,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET,
+      clientID: DISCORD_CLIENT_ID,
+      clientSecret: DISCORD_CLIENT_SECRET,
       callbackURL: '/auth/discord/callback',
     },
-    (accessToken, refreshToken, profile, done) => {
-      process.nextTick(() => {
-        return done(null, profile)
-      })
-
-      // User.findOrCreate({discordId: profile.id}, function (err, user) {
-      //   return cb(err, user)
-      // })
-    },
+    DiscordStrategyCallback,
   ),
 )
 
@@ -76,7 +96,7 @@ const startServer = async () => {
       cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+        maxAge: 1000 * 60 * 60 * 24 * 7 * 365, // 7 years
       },
     }),
   )
@@ -110,9 +130,10 @@ const startServer = async () => {
 
       return {
         loaders,
-        url: req.protocol + '://' + req.get('host'),
+        url: `${req.protocol}://${req.get('host')}`,
         session: req.session,
         req,
+        db,
         user: currentUser,
       }
     },
@@ -125,9 +146,11 @@ const startServer = async () => {
 
   server.applyMiddleware({app, cors: false})
 
-  await app.listen({
-    port: 4000,
-  })
+  sequelize.sync().then(async () =>
+    app.listen({
+      port: 4000,
+    }),
+  )
   console.log('Server is running on localhost:4000')
 }
 

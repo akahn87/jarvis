@@ -2,13 +2,17 @@ import React from 'react'
 import {useQuery} from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
+// styles
+import useStyles from './styles'
+
 import Typography from '@material-ui/core/Typography'
 import {Container} from '@material-ui/core'
 
-import LoadingIndicator from '../components/LoadingIndicator'
-import TournamentDetails from '../components/TournamentDetails'
+import LoadingIndicator from '../../components/LoadingIndicator'
+import TournamentDetails from '../../components/TournamentDetails'
 
-import Hero from '../images/hero/valorant.jpg'
+import ValorantHero from '../../images/hero/valorant.jpg'
+import QuakeChampionsHero from '../../images/hero/quake-champions.jpg'
 
 const TOURNAMENT = gql`
   query getTournament($id: String!) {
@@ -35,7 +39,7 @@ const TOURNAMENT = gql`
 
 const styles = {
   hero: {
-    backgroundImage: `url(${Hero})`,
+    backgroundImage: `url(${QuakeChampionsHero})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center center',
     backgroundBlendMode: 'multiply',
@@ -53,6 +57,7 @@ const styles = {
 }
 
 function Tournament({match}) {
+  const classes = useStyles()
   const {loading, error, data} = useQuery(TOURNAMENT, {
     variables: {id: match.params.id},
   })
@@ -62,10 +67,19 @@ function Tournament({match}) {
 
   return (
     <div>
-      <div style={styles.hero}>
-        <div style={styles.shadow}>
+      <div
+        className={classes.hero}
+        style={{
+          backgroundImage: `url(${
+            data.tournament.game_name === 'valorant'
+              ? ValorantHero
+              : QuakeChampionsHero
+          })`,
+        }}
+      >
+        <div className={classes.shadow}>
           <Container maxWidth="lg">
-            <section style={styles.header}>
+            <section className={classes.header}>
               <Typography variant="h6" component="h2">
                 {data.tournament.name}
               </Typography>

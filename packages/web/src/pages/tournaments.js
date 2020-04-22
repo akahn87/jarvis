@@ -24,7 +24,7 @@ const TOURNAMENTS = gql`
   }
 `
 
-function Tournaments() {
+function Dashboard() {
   const {loading, error, data} = useQuery(TOURNAMENTS)
 
   if (loading) return <LoadingIndicator />
@@ -32,10 +32,9 @@ function Tournaments() {
 
   return (
     <Container maxWidth="lg">
-      <h1>Tournaments</h1>
       <TournamentList tournaments={data.tournaments} />
     </Container>
   )
 }
 
-export default Tournaments
+export default Dashboard
