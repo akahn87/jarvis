@@ -1,19 +1,18 @@
 import fs from 'fs'
 import path from 'path'
 import Sequelize from 'sequelize'
+import envConfigs from './config'
 
 const basename = path.basename(__filename)
 const env = process.env.NODE_ENV || 'development'
-const config = require('./db.config.json')[env]
+const config = envConfigs[env]
 
 const models = {}
 
-const {DATABASE, DATABASE_USERNAME, DATABASE_PASSWORD} = process.env
-
 const sequelize = new Sequelize(
-  DATABASE,
-  DATABASE_USERNAME,
-  DATABASE_PASSWORD,
+  config.database,
+  config.username,
+  config.password,
   config,
 )
 

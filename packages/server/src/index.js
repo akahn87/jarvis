@@ -25,9 +25,7 @@ const DiscordStrategyCallback = async (
   profile,
   done,
 ) => {
-  // let user = await User.findOne({username: profile.username})
-  // console.log(user)
-  let user = profile
+  let user = await db.User.findOne({discordId: profile.id})
 
   // no user was found, lets create a new one
   if (!user) {
@@ -37,6 +35,7 @@ const DiscordStrategyCallback = async (
       username: profile.username,
       discordId: profile.id,
       token: accessToken,
+      type: 'USER',
     })
   }
 

@@ -15,8 +15,9 @@ import SidebarLink from './components/SidebarLink'
 
 // context
 import {useLayoutState} from '../../context/LayoutContext'
+import {useUser} from '../../context/UserContext'
 
-const structure = [
+let baseStructure = [
   {
     id: 0,
     label: 'Home',
@@ -29,6 +30,9 @@ const structure = [
     link: '/tournaments',
     icon: <FolderIcon />,
   },
+]
+
+const adminStructure = [
   {id: 100, type: 'divider'},
   {id: 101, type: 'title', label: 'Administration'},
   {
@@ -47,6 +51,12 @@ const structure = [
 
 function Sidebar() {
   const classes = useStyles()
+  const user = useUser()
+
+  const structure = [
+    ...baseStructure,
+    ...(user && user.role === 'ADMIN' ? adminStructure : []),
+  ]
 
   // global
   const {isSidebarOpened} = useLayoutState()

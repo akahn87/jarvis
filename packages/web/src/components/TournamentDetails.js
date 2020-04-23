@@ -58,6 +58,7 @@ function TournamentDetails({tournament}) {
             <Tab label="Information" {...a11yProps(1)} />
             <Tab label="Teams" {...a11yProps(1)} />
             <Tab label="Match" {...a11yProps(2)} />
+            <Tab label="Bracket" {...a11yProps(3)} />
           </Tabs>
         </Container>
       </AppBar>
@@ -113,6 +114,9 @@ function TournamentDetails({tournament}) {
           </Paper>
         </TabPanel>
         <TabPanel value={value} index={2}>
+          Matches
+        </TabPanel>
+        <TabPanel value={value} index={3}>
           <img
             src={tournament.live_image_url}
             alt={`${tournament.name} Bracket`}

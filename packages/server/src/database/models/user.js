@@ -11,6 +11,7 @@ const user = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       unique: true,
     },
+    type: DataTypes.STRING,
   })
 
   return User
