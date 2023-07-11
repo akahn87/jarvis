@@ -26,7 +26,7 @@
     "pg-hstore": "^2.3.3",
     "rate-limit-redis": "^1.7.0",
     "sanitize-html": "^1.23.0",
-    "sequelize": "^5.21.6"
+    "sequelize": "^6.29.0"
   },
   "scripts": {
     "start": "cross-env NODE_ENV=development nodemon --exec npx babel-node --root-mode upward --ignore=\" \" src/index.js",
